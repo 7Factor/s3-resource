@@ -14,11 +14,10 @@ cd $(dirname $0)/../..
 
 go get github.com/concourse/s3-resource
 
-echo "Building resource..."
-pushd "${release_dir}" > /dev/null
-  ./ci/scripts/build "${BUILT_RESOURCE}"
-popd > /dev/null
+go build -o ./assets/check ./cmd/check
+go build -o ./assets/in ./cmd/in
+go build -o ./assets/out ./cmd/out
+
+cp -a ./* ${BUILT_RESOURCE}/
 
 cp "${workspace_dir}/${DOCKERFILE_DIR}/Dockerfile" ${BUILT_RESOURCE}/
-
-echo "Successfully built resource!"
