@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+release_dir="$( cd "$( dirname "$0" )" && cd ../.. && pwd )"
+workspace_dir="$( cd "${release_dir}" && cd .. && pwd )"
+
+BUILT_RESOURCE=$PWD/built-resource
+
+export GOPATH=$PWD/gopath
+export PATH=$PWD/gopath/bin:$PATH
+
+cd $(dirname $0)/../..
+
+go get github.com/concourse/s3-resource
+
+echo "Building resource..."
+pushd "${release_dir}" > /dev/null
+  ./ci/scripts/build "${BUILT_RESOURCE}"
+popd > /dev/null
+
+cp "${workspace_dir}/${DOCKERFILE_DIR}/Dockerfile" ${BUILT_RESOURCE}/
+
+echo "Successfully built resource!"
